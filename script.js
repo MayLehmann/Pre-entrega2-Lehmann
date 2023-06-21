@@ -1,48 +1,60 @@
-let producto1 = { nombre: "Tire Table Standart", precio: 19500 }
-let producto2 = { nombre: "Tire Table Pro", precio: 21400 }
-let producto3 = { nombre: "Tire Table Pro X-trail", precio: 25500 }
-let producto4 = { nombre: "Tire Table Pro Aluminium", precio: 26500 }
+let productos = [
+  { nombre: "Tire Table Standart", precio: 19500 },
+  { nombre: "Tire Table Pro", precio: 21400 },
+  { nombre: "Tire Table Pro X-trail", precio: 25500 },
+  { nombre: "Tire Table Pro Aluminium", precio: 26500 }
+];
 
 function mostrarProductos() {
   console.log("Productos disponibles:")
-  console.log(`1. ${producto1.nombre} - $${producto1.precio}`)
-  console.log(`2. ${producto2.nombre} - $${producto2.precio}`)
-  console.log(`3. ${producto3.nombre} - $${producto3.precio}`)
-  console.log(`4. ${producto4.nombre} - $${producto4.precio}`)
+  productos.forEach((producto, index) => {
+    console.log(`${index + 1}. ${producto.nombre} - $${producto.precio}`);
+  });
+}
+
+function ordenarPorPrecio() {
+  productos.sort((a, b) => a.precio - b.precio);
 }
 
 function simularCompra() {
-  mostrarProductos()
-  let seleccion = parseInt(prompt("Ingresá el número del producto que deseas comprar:"))
+  ordenarPorPrecio();
 
-  let productoSeleccionado, cantidad, total
+  while (true) {
+    mostrarProductos();
 
-  if (seleccion === 1) {
-    productoSeleccionado = producto1
-  } else if (seleccion === 2) {
-    productoSeleccionado = producto2
-  } else if (seleccion === 3) {
-    productoSeleccionado = producto3
-  } else if (seleccion === 4) {
-    productoSeleccionado = producto4
-  } else {
-    console.log("Selección inválida. Por favor, intentá nuevamente.")
-    alert ('La selección es inválida')
-    return
-  }
+    let seleccion = parseInt(prompt("Ingresá el código del producto que deseas comprar:"));
+    if (seleccion >= 1 && seleccion <= productos.length) {
+      let productoSeleccionado = productos[seleccion - 1];
 
-  cantidad = parseInt(prompt(`Ingresá la cantidad deseada de ${productoSeleccionado.nombre}:`))
+      let cantidad;
+      while (true) {
+        cantidad = parseInt(prompt(`Ingresá la cantidad deseada de ${productoSeleccionado.nombre}:`));
+        if (cantidad > 0) {
+          break;
+        } else {
+          console.log("La cantidad ingresada es inválida. Por favor, ingresá una cantidad válida.");
+          alert("La cantidad ingresada es inválida. Por favor, ingresá una cantidad válida.");
+          let opcion = prompt("¿Querés ingresar nuevamente la cantidad deseada? (Sí/No)").toLowerCase();
+          if (opcion === "no") {
+            return;
+          }
+        }
+      }
 
-  if (cantidad > 0) {
-    total = productoSeleccionado.precio * cantidad
-    console.log(`Compraste ${cantidad} ${productoSeleccionado.nombre}(s) por un total de $${total}.`)
-    alert(`Compraste ${cantidad} ${productoSeleccionado.nombre}(s) por un total de $${total}.`)
-    
-  } 
-  else {
-    console.log("La cantidad ingresada es inválida. Por favor, intentá nuevamente.")
-    alert("La cantidad ingresada es inválida. Por favor, intentá nuevamente.")
+      let total = productoSeleccionado.precio * cantidad;
+      console.log(`Compraste ${cantidad} ${productoSeleccionado.nombre}(s) por un total de $${total}.`);
+      alert(`Compraste ${cantidad} ${productoSeleccionado.nombre}(s) por un total de $${total}.`);
+      break;
+    } else {
+      console.log("Selección inválida. Por favor, intentá nuevamente.");
+      alert("La selección es inválida. Por favor, intentá nuevamente.");
+      let opcion = prompt("¿Deseas ingresar nuevamente la selección de producto? (Sí/No)").toLowerCase();
+      if (opcion === "no") {
+        return;
+      }
+    }
   }
 }
 
 simularCompra();
+
