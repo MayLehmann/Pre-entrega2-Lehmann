@@ -48,7 +48,7 @@ function simularCompra() {
     } else {
       console.log("Selección inválida. Por favor, intentá nuevamente.");
       alert("La selección es inválida. Por favor, intentá nuevamente.");
-      let opcion = prompt("¿Deseas ingresar nuevamente la selección de producto? (Sí/No)").toLowerCase();
+      let opcion = prompt("¿Querés regresar a la selección de producto? (Sí/No)").toLowerCase();
       if (opcion === "no") {
         return;
       }
