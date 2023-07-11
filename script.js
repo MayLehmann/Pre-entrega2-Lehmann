@@ -1,14 +1,21 @@
 let productos = [
-  { nombre: "Tire Table Standart", precio: 19500 },
-  { nombre: "Tire Table Pro", precio: 21400 },
-  { nombre: "Tire Table Pro X-trail", precio: 25500 },
-  { nombre: "Tire Table Pro Aluminium", precio: 26500 }
+  { nombre: "Tire Table Standard", precio: 18500 },
+  { nombre: "Tire Table PRO", precio: 21500 },
+  { nombre: "Tire Table PRO XTR", precio: 24500 },
+  { nombre: "Tire Table PRO ALUM", precio: 26500 }
 ];
 
+let carrito = []; 
+
 function mostrarProductos() {
-  console.log("Productos disponibles:")
-  productos.forEach((producto, index) => {
-    console.log(`${index + 1}. ${producto.nombre} - $${producto.precio}`);
+  let cards = document.getElementsByClassName('card');
+
+  Array.from(cards).forEach((card, index) => {
+    let producto = productos[index];
+
+    let productText = card.querySelector('.product-text');
+    productText.querySelector('h5').textContent = producto.nombre;
+    productText.querySelector('p span').textContent = `$${producto.precio}`;
   });
 }
 
@@ -18,43 +25,74 @@ function ordenarPorPrecio() {
 
 function simularCompra() {
   ordenarPorPrecio();
+  mostrarProductos();
 
-  while (true) {
-    mostrarProductos();
+  let botonesComprar = document.querySelectorAll('.product-price-btn button');
 
-    let seleccion = parseInt(prompt("Ingresá el código del producto que deseas comprar:"));
-    if (seleccion >= 1 && seleccion <= productos.length) {
-      let productoSeleccionado = productos[seleccion - 1];
+  botonesComprar.forEach((boton, index) => {
+    boton.addEventListener('click', function() {
+      let productoSeleccionado = productos[index];
 
-      let cantidad;
-      while (true) {
-        cantidad = parseInt(prompt(`Ingresá la cantidad deseada de ${productoSeleccionado.nombre}:`));
-        if (cantidad > 0) {
-          break;
-        } else {
-          console.log("La cantidad ingresada es inválida. Por favor, ingresá una cantidad válida.");
-          alert("La cantidad ingresada es inválida. Por favor, ingresá una cantidad válida.");
-          let opcion = prompt("¿Querés ingresar nuevamente la cantidad deseada? (Sí/No)").toLowerCase();
-          if (opcion === "no") {
-            return;
+      Swal.fire({
+        title: `Ingresá la cantidad deseada de ${productoSeleccionado.nombre}:`,
+        input: 'number',
+        inputAttributes: {
+          min: 1,
+          step: 1
+        },
+        showCancelButton: true,
+        confirmButtonText: 'Comprar',
+        cancelButtonText: 'Cancelar',
+        showLoaderOnConfirm: true,
+        preConfirm: (cantidad) => {
+          cantidad = parseInt(cantidad);
+          if (cantidad > 0) {
+            let total = productoSeleccionado.precio * cantidad;
+            return { cantidad, total };
+          } else {
+            throw new Error('La cantidad ingresada es inválida. Por favor, ingresá una cantidad válida.');
           }
-        }
-      }
+        },
+      }).then((result) => {
+        if (result.isConfirmed) {
+          let { cantidad, total } = result.value;
+          Swal.fire(`Compraste ${cantidad} ${productoSeleccionado.nombre}(s) por un total de $${total}.`);
 
-      let total = productoSeleccionado.precio * cantidad;
-      console.log(`Compraste ${cantidad} ${productoSeleccionado.nombre}(s) por un total de $${total}.`);
-      alert(`Compraste ${cantidad} ${productoSeleccionado.nombre}(s) por un total de $${total}.`);
-      break;
-    } else {
-      console.log("Selección inválida. Por favor, intentá nuevamente.");
-      alert("La selección es inválida. Por favor, intentá nuevamente.");
-      let opcion = prompt("¿Querés regresar a la selección de producto? (Sí/No)").toLowerCase();
-      if (opcion === "no") {
-        return;
-      }
-    }
-  }
+          // Guardar la compra en el carrito
+          let compra = {
+            producto: productoSeleccionado.nombre,
+            cantidad: cantidad,
+            total: total
+          };
+
+          carrito.push(compra);
+          actualizarCarrito();
+
+          // Guardar el carrito en el almacenamiento local
+          localStorage.setItem('carrito', JSON.stringify(carrito));
+        }
+      }).catch((error) => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: error.message
+        });
+      });
+    });
+  });
+}
+
+function actualizarCarrito() {
+  let cartCount = document.getElementById('cart-count');
+  cartCount.textContent = carrito.length;
+}
+
+// Cargar el carrito desde el almacenamiento local si existe
+let carritoGuardado = localStorage.getItem('carrito');
+
+if (carritoGuardado) {
+  carrito = JSON.parse(carritoGuardado);
+  actualizarCarrito();
 }
 
 simularCompra();
-
