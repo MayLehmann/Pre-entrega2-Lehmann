@@ -80,6 +80,7 @@ padding: 15px;
     position: relative;
     display: inline-block;
     cursor: pointer;
+    color: #F26716;
   }
 
   .cart-icon .cart-count {
@@ -201,6 +202,13 @@ span {
     font-family: 'Montserrat', sans-serif;
     font-size: 34px;
     margin: 20px;
+}
+
+.cardCount {
+    color: #F26716;
+    font-size: 23px;
+    font-family: 'Montserrat', sans-serif;
+
 }
 
 .product-price-btn button {

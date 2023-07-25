@@ -14,8 +14,15 @@ function mostrarProductos() {
     let producto = productos[index];
 
     let productText = card.querySelector('.product-text');
-    productText.querySelector('h5').textContent = producto.nombre;
-    productText.querySelector('p span').textContent = `$${producto.precio}`;
+    if (productText) {
+      let nombreElement = productText.querySelector('h4');
+      let precioElement = productText.querySelector('p span');
+      
+      if (nombreElement && precioElement) {
+        nombreElement.textContent = producto.nombre;
+        precioElement.textContent = `$${producto.precio}`;
+      }
+    }
   });
 }
 
@@ -83,11 +90,11 @@ function simularCompra() {
 }
 
 function actualizarCarrito() {
-  let cartCount = document.getElementById('cart-count');
+  let cartCount = document.getElementById('cartCount');
   cartCount.textContent = carrito.length;
 }
 
-// Cargar el carrito desde el almacenamiento local si existe
+// Cargar el carrito desde el almacenamiento local 
 let carritoGuardado = localStorage.getItem('carrito');
 
 if (carritoGuardado) {
