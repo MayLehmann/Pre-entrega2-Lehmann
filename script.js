@@ -1,3 +1,4 @@
+
 let productos = [
   { nombre: "Tire Table Standard", precio: 18500 },
   { nombre: "Tire Table PRO", precio: 21500 },
@@ -5,7 +6,9 @@ let productos = [
   { nombre: "Tire Table PRO ALUM", precio: 26500 }
 ];
 
-let carrito = []; 
+
+
+let carrito = [];
 
 function mostrarProductos() {
   let cards = document.getElementsByClassName('card');
@@ -17,7 +20,7 @@ function mostrarProductos() {
     if (productText) {
       let nombreElement = productText.querySelector('h4');
       let precioElement = productText.querySelector('p span');
-      
+
       if (nombreElement && precioElement) {
         nombreElement.textContent = producto.nombre;
         precioElement.textContent = `$${producto.precio}`;
@@ -64,8 +67,7 @@ function simularCompra() {
         if (result.isConfirmed) {
           let { cantidad, total } = result.value;
           Swal.fire(`Compraste ${cantidad} ${productoSeleccionado.nombre}(s) por un total de $${total}.`);
-
-          // Guardar la compra en el carrito
+          
           let compra = {
             producto: productoSeleccionado.nombre,
             cantidad: cantidad,
@@ -75,7 +77,7 @@ function simularCompra() {
           carrito.push(compra);
           actualizarCarrito();
 
-          // Guardar el carrito en el almacenamiento local
+         
           localStorage.setItem('carrito', JSON.stringify(carrito));
         }
       }).catch((error) => {
@@ -94,7 +96,7 @@ function actualizarCarrito() {
   cartCount.textContent = carrito.length;
 }
 
-// Cargar el carrito desde el almacenamiento local 
+
 let carritoGuardado = localStorage.getItem('carrito');
 
 if (carritoGuardado) {
