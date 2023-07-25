@@ -67,7 +67,7 @@ function simularCompra() {
         if (result.isConfirmed) {
           let { cantidad, total } = result.value;
           Swal.fire(`Compraste ${cantidad} ${productoSeleccionado.nombre}(s) por un total de $${total}.`);
-          
+
           let compra = {
             producto: productoSeleccionado.nombre,
             cantidad: cantidad,
@@ -77,7 +77,7 @@ function simularCompra() {
           carrito.push(compra);
           actualizarCarrito();
 
-         
+
           localStorage.setItem('carrito', JSON.stringify(carrito));
         }
       }).catch((error) => {
@@ -96,12 +96,19 @@ function actualizarCarrito() {
   cartCount.textContent = carrito.length;
 }
 
-
 let carritoGuardado = localStorage.getItem('carrito');
 
 if (carritoGuardado) {
   carrito = JSON.parse(carritoGuardado);
   actualizarCarrito();
 }
+
+function restablecerContador() {
+  carrito = [];
+  actualizarCarrito();
+  localStorage.removeItem('carrito');
+}
+
+restablecerContador();
 
 simularCompra();
