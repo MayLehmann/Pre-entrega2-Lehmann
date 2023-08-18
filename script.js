@@ -1,4 +1,3 @@
-
 let productos = [
   { nombre: "Tire Table Standard", precio: 18500 },
   { nombre: "Tire Table PRO", precio: 21500 },
@@ -6,14 +5,58 @@ let productos = [
   { nombre: "Tire Table PRO ALUM", precio: 26500 }
 ];
 
-
-
 let carrito = [];
 
-function mostrarProductos() {
-  let cards = document.getElementsByClassName('card');
+function generarCards() {
+  let cardsContainer = document.querySelector('.Card-container');
 
-  Array.from(cards).forEach((card, index) => {
+  productos.forEach((producto) => {
+    let card = document.createElement('div');
+    card.classList.add('card');
+
+    let productImg = document.createElement('div');
+    productImg.classList.add('product-img');
+    let img = document.createElement('img');
+    img.src = `./multimedia/${producto.nombre.replace(/ /g, '-').toLowerCase()}.jpg`;
+    img.alt = producto.nombre;
+    img.height = 420;
+    img.width = 327;
+    productImg.appendChild(img);
+
+    let productInfo = document.createElement('div');
+    productInfo.classList.add('product-info');
+
+    let productText = document.createElement('div');
+    productText.classList.add('product-text');
+
+    let nombreElement = document.createElement('h4');
+    nombreElement.textContent = producto.nombre;
+
+    let precioElement = document.createElement('p');
+    let precioSpan = document.createElement('span');
+    precioSpan.textContent = `$${producto.precio}`;
+    precioElement.appendChild(precioSpan);
+
+    let comprarBtn = document.createElement('button');
+    comprarBtn.textContent = 'Comprar';
+
+    productText.appendChild(nombreElement);
+    productText.appendChild(precioElement);
+
+    productInfo.appendChild(productText);
+    productInfo.appendChild(comprarBtn);
+
+    card.appendChild(productImg);
+    card.appendChild(productInfo);
+
+    cardsContainer.appendChild(card);
+  });
+}
+
+function mostrarProductos() {
+  let cards = document.querySelectorAll('.card');
+
+  cards.forEach((card, index) => {
     let producto = productos[index];
 
     let productText = card.querySelector('.product-text');
@@ -29,6 +72,46 @@ function mostrarProductos() {
   });
 }
 
+function mostrarCarrito() {
+  let cartContainer = document.getElementById('cartContainer');
+  cartContainer.innerHTML = '';
+
+  carrito.forEach((compra) => {
+    let carritoItem = document.createElement('div');
+    carritoItem.classList.add('carrito-item');
+
+    
+
+    cartContainer.appendChild(carritoItem);
+  });
+
+  Swal.fire({
+    title: 'Carrito de Compras',
+    html: cartContainer,
+    showCancelButton: true,
+    confirmButtonText: 'Finalizar Compra',
+    cancelButtonText: 'Seguir Comprando'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      carrito = [];
+      actualizarCarrito();
+      localStorage.removeItem('carrito');
+      mostrarCarrito();
+    }
+  });
+}
+
+async function obtenerProductosDesdeJSON() {
+  try {
+    let response = await fetch('ruta/al/archivo.json');
+    let data = await response.json();
+    productos = data;
+    generarCards();
+  } catch (error) {
+    console.error('Error al obtener los productos:', error);
+  }
+}
+
 function ordenarPorPrecio() {
   productos.sort((a, b) => a.precio - b.precio);
 }
@@ -37,10 +120,10 @@ function simularCompra() {
   ordenarPorPrecio();
   mostrarProductos();
 
-  let botonesComprar = document.querySelectorAll('.product-price-btn button');
+  let botonesComprar = document.querySelectorAll('.product-text button');
 
   botonesComprar.forEach((boton, index) => {
-    boton.addEventListener('click', function() {
+    boton.addEventListener('click', function () {
       let productoSeleccionado = productos[index];
 
       Swal.fire({
@@ -77,7 +160,6 @@ function simularCompra() {
           carrito.push(compra);
           actualizarCarrito();
 
-
           localStorage.setItem('carrito', JSON.stringify(carrito));
         }
       }).catch((error) => {
@@ -111,4 +193,5 @@ function restablecerContador() {
 
 restablecerContador();
 
+obtenerProductosDesdeJSON();
 simularCompra();
